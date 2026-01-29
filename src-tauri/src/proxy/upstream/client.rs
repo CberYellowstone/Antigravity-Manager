@@ -30,7 +30,7 @@ impl UpstreamClient {
             .pool_idle_timeout(Duration::from_secs(90))  // 空闲连接保持 90 秒
             .tcp_keepalive(Duration::from_secs(60))      // TCP 保活探测 60 秒
             .timeout(Duration::from_secs(600))
-            .user_agent("antigravity/1.11.9 windows/amd64");
+            .user_agent("antigravity/1.15.8 windows/amd64");
 
         if let Some(config) = proxy_config {
             if config.enabled && !config.url.is_empty() {
@@ -106,7 +106,7 @@ impl UpstreamClient {
         );
         headers.insert(
             header::USER_AGENT,
-            header::HeaderValue::from_static("antigravity/1.11.9 windows/amd64"),
+            header::HeaderValue::from_static("antigravity/1.15.8 windows/amd64"),
         );
 
         // 注入额外的 Headers (如 anthropic-beta)
@@ -219,7 +219,7 @@ impl UpstreamClient {
         );
         headers.insert(
             header::USER_AGENT,
-            header::HeaderValue::from_static("antigravity/1.11.9 windows/amd64"),
+            header::HeaderValue::from_static("antigravity/1.15.8 windows/amd64"),
         );
 
         let mut last_err: Option<String> = None;
