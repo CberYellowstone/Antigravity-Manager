@@ -5,7 +5,7 @@ use crate::models::QuotaData;
 use crate::modules::config;
 
 const QUOTA_API_URL: &str = "https://daily-cloudcode-pa.sandbox.googleapis.com/v1internal:fetchAvailableModels";
-const USER_AGENT: &str = "antigravity/1.11.3 Darwin/arm64";
+const USER_AGENT: &str = "antigravity/1.15.8 Darwin/arm64";
 
 /// Critical retry threshold: considered near recovery when quota reaches 95%
 const NEAR_READY_THRESHOLD: i32 = 95;

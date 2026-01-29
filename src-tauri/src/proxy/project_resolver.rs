@@ -18,7 +18,7 @@ pub async fn fetch_project_id(access_token: &str) -> Result<String, String> {
         .bearer_auth(access_token)
         // .header("Host", "cloudcode-pa.googleapis.com") // 移除 Host header，因为已切换域名
 
-        .header("User-Agent", "antigravity/1.11.9 windows/amd64")
+        .header("User-Agent", "antigravity/1.15.8 windows/amd64")
         .header("Content-Type", "application/json")
         .json(&request_body)
         .send()
