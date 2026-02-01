@@ -534,6 +534,43 @@ pub async fn handle_chat_completions(
             }
         }
 
+        // 只有 403 (权限/地区限制) 和 401 (认证失效) 触发账号轮换
+        if status_code == 403 || status_code == 401 {
+            // [NEW] Check for VALIDATION_REQUIRED error - temporarily block account
+            if status_code == 403 && (
+                error_text.contains("VALIDATION_REQUIRED") || 
+                error_text.contains("verify your account") ||
+                error_text.contains("validation_url")
+            ) {
+                tracing::warn!(
+                    "[OpenAI] VALIDATION_REQUIRED detected on account {}, temporarily blocking",
+                    email
+                );
+                // Block for 10 minutes (default, configurable via config file)
+                let block_minutes = 10i64;
+                let block_until = chrono::Utc::now().timestamp() + (block_minutes * 60);
+                
+                // Get account_id from token_manager via email lookup
+                if let Some(acc_id) = token_manager.get_account_id_by_email(&email) {
+                    if let Err(e) = token_manager.set_validation_block_public(&acc_id, block_until, &error_text).await {
+                        tracing::error!("Failed to set validation block: {}", e);
+                    }
+                }
+            }
+            
+            if apply_retry_strategy(
+                RetryStrategy::FixedDelay(Duration::from_millis(200)),
+                attempt,
+                max_attempts,
+                status_code,
+                &trace_id,
+            )
+            .await
+            {
+                continue;
+            }
+        }
+
         // 404 等由于模型配置或路径错误的 HTTP 异常，直接报错，不进行无效轮换
         error!(
             "OpenAI Upstream non-retryable error {} on account {}: {}",

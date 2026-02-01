@@ -143,6 +143,7 @@ mod tests {
             admin_password: Some("admin123".to_string()),
             allow_lan_access: true,
             port: 8045,
+            security_monitor: crate::proxy::config::SecurityMonitorConfig::default(),
         }));
 
         // 模拟请求 - 管理接口使用正确的管理密码

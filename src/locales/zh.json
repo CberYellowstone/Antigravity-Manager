@@ -43,6 +43,7 @@
         "proxy": "API 反代",
         "call_records": "流量日志",
         "token_stats": "Token 统计",
+        "security": "IP 管理",
         "settings": "设置",
         "theme_to_dark": "切换到深色模式",
         "theme_to_light": "切换到浅色模式",
@@ -282,6 +283,7 @@
             "account": "账号",
             "proxy": "代理设置",
             "advanced": "高级",
+            "debug": "调试",
             "about": "关于"
         },
         "general": {
@@ -383,6 +385,13 @@
             "http_api_port_invalid": "端口号无效（范围：1024-65535）",
             "http_api_settings_saved": "HTTP API 设置已保存，重启应用后生效",
             "http_api_restart_required": "⚠️ 需要重启应用后生效"
+        },
+        "debug": {
+            "title": "调试设置",
+            "console_title": "调试控制台",
+            "console_desc": "查看实时应用日志，用于排查问题。",
+            "enable_desc": "开启后将捕获并显示后端日志。",
+            "open_btn": "打开控制台"
         },
         "about": {
             "title": "关于",
@@ -921,6 +930,103 @@
             "decode_error": "网络连接不稳定,数据传输中断。建议: 1) 检查网络连接 2) 更换代理节点 3) 稍后重试",
             "stream_error": "数据流传输错误,请稍后重试",
             "unknown_error": "发生未知错误,请稍后重试"
+        }
+    },
+    "security": {
+        "title": "安全监控",
+        "refresh_data": "刷新数据",
+        "refresh": "刷新",
+        "tab_logs": "访问日志",
+        "tab_stats": "统计分析",
+        "tab_blacklist": "黑名单管理",
+        "tab_whitelist": "白名单管理",
+        "tab_config": "安全配置",
+        "stats": {
+            "total_requests": "总请求数",
+            "total_requests_desc": "所有记录的请求",
+            "unique_ips": "独立 IP 数",
+            "unique_ips_desc": "不同的客户端 IP 地址",
+            "blocked_requests": "拦截请求数",
+            "blocked_requests_desc": "被规则拒绝的请求",
+            "ip_activity_token_usage": "IP 活跃度 & Token 消耗",
+            "hour": "时",
+            "day": "日",
+            "week": "周",
+            "month": "月",
+            "rank": "排名",
+            "ip_address": "IP 地址",
+            "activity_reqs": "活跃度 (请求数)",
+            "total_token": "总 Token",
+            "prompt": "提问",
+            "completion": "回答",
+            "no_data": "暂无数据"
+        },
+        "logs": {
+            "search_placeholder": "搜索 IP, 路径, User Agent...",
+            "show_blocked_only": "仅显示被拦截",
+            "status": "状态",
+            "ip_address": "IP 地址",
+            "method": "方法",
+            "path": "路径",
+            "duration": "耗时",
+            "time": "时间",
+            "reason": "原因",
+            "blocked": "拦截",
+            "no_logs": "暂无日志",
+            "total_records": "共 {{total}} 条记录",
+            "prev_page": "上一页",
+            "next_page": "下一页",
+            "page_num": "第 {{page}} 页",
+            "per_page_suffix": "/页"
+        },
+        "blacklist": {
+            "add_ip": "添加 IP",
+            "search_placeholder": "搜索...",
+            "added_at": "添加时间",
+            "expires_at": "过期时间",
+            "no_data": "暂无黑名单数据",
+            "add_title": "添加到黑名单",
+            "ip_cidr_label": "IP 地址或 CIDR",
+            "ip_cidr_placeholder": "例如 192.168.1.1 或 10.0.0.0/24",
+            "reason_label": "原因 (可选)",
+            "reason_placeholder": "例如：恶意扫描",
+            "expires_label": "过期时间（小时，可选）",
+            "expires_placeholder": "留空则永久生效",
+            "cancel": "取消",
+            "confirm": "添加",
+            "add_btn": "添加",
+            "error_duplicate": "该 IP 已存在于黑名单中",
+            "error_invalid_ip": "无效的 IP 格式。请使用 IP 地址或 CIDR 表示法（例如 192.168.1.0/24）",
+            "error_add_failed": "添加失败"
+        },
+        "whitelist": {
+            "add_ip": "添加信任 IP",
+            "no_data": "暂无白名单数据",
+            "add_title": "添加到白名单",
+            "description_label": "备注 (可选)",
+            "description_placeholder": "例如：内部服务器",
+            "cancel": "取消",
+            "confirm": "添加",
+            "add_btn": "添加"
+        },
+        "config": {
+            "title": "安全设置",
+            "save": "保存更改",
+            "saving": "保存中...",
+            "blacklist_title": "IP 黑名单",
+            "blacklist_desc": "管理被拦截的 IP 地址和规则。",
+            "enable_blacklist": "启用黑名单保护",
+            "block_msg_label": "自定义拦截消息",
+            "block_msg_desc": "返回给被拦截客户端的响应内容。",
+            "whitelist_title": "IP 白名单",
+            "whitelist_desc": "管理信任的 IP 地址。",
+            "enable_whitelist": "启用白名单模式",
+            "whitelist_warning": "警告: 启用白名单模式将拦截所有不在白名单中的 IP 请求。如果您通过代理访问，请务必小心不要将自己锁在外面。",
+            "whitelist_priority": "白名单优先 (覆盖黑名单)",
+            "whitelist_priority_desc": "启用后，白名单 IP 将被允许访问，即使它们匹配黑名单规则。",
+            "load_error": "加载配置失败",
+            "save_success": "配置已保存",
+            "save_error": "保存配置失败"
         }
     }
 }

@@ -193,6 +193,73 @@ impl Default for DebugLoggingConfig {
     }
 }
 
+/// IP 黑名单配置
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IpBlacklistConfig {
+    /// 是否启用黑名单
+    #[serde(default)]
+    pub enabled: bool,
+    
+    /// 自定义封禁消息
+    #[serde(default = "default_block_message")]
+    pub block_message: String,
+}
+
+impl Default for IpBlacklistConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            block_message: default_block_message(),
+        }
+    }
+}
+
+fn default_block_message() -> String {
+    "Access denied".to_string()
+}
+
+/// IP 白名单配置
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IpWhitelistConfig {
+    /// 是否启用白名单模式 (启用后只允许白名单IP访问)
+    #[serde(default)]
+    pub enabled: bool,
+    
+    /// 白名单优先模式 (白名单IP跳过黑名单检查)
+    #[serde(default = "default_true")]
+    pub whitelist_priority: bool,
+}
+
+impl Default for IpWhitelistConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            whitelist_priority: true,
+        }
+    }
+}
+
+/// 安全监控配置
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SecurityMonitorConfig {
+    /// IP 黑名单配置
+    #[serde(default)]
+    pub blacklist: IpBlacklistConfig,
+    
+    /// IP 白名单配置
+    #[serde(default)]
+    pub whitelist: IpWhitelistConfig,
+}
+
+impl Default for SecurityMonitorConfig {
+    fn default() -> Self {
+        Self {
+            blacklist: IpBlacklistConfig::default(),
+            whitelist: IpWhitelistConfig::default(),
+        }
+    }
+}
+
 /// 反代服务配置
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProxyConfig {
@@ -261,6 +328,10 @@ pub struct ProxyConfig {
     #[serde(default)]
     pub experimental: ExperimentalConfig,
 
+    /// 安全监控配置 (IP 黑白名单)
+    #[serde(default)]
+    pub security_monitor: SecurityMonitorConfig,
+
     /// 固定账号模式的账号ID (Fixed Account Mode)
     /// - None: 使用轮询模式
     /// - Some(account_id): 固定使用指定账号
@@ -299,6 +370,7 @@ impl Default for ProxyConfig {
             zai: ZaiConfig::default(),
             scheduling: crate::proxy::sticky_config::StickySessionConfig::default(),
             experimental: ExperimentalConfig::default(),
+            security_monitor: SecurityMonitorConfig::default(),
             preferred_account_id: None, // 默认使用轮询模式
             user_agent_override: None,
             saved_user_agent: None,

@@ -60,6 +60,12 @@ pub fn run() {
     if let Err(e) = modules::token_stats::init_db() {
         error!("Failed to initialize token stats database: {}", e);
     }
+
+    // Initialize security database
+    if let Err(e) = modules::security_db::init_db() {
+        error!("Failed to initialize security database: {}", e);
+    }
+
     
     if is_headless {
         info!("Starting in HEADLESS mode...");
@@ -193,6 +199,9 @@ pub fn run() {
         .setup(|app| {
             info!("Setup starting...");
 
+            // Initialize log bridge with app handle for debug console
+            modules::log_bridge::init_log_bridge(app.handle().clone());
+
             // Linux: Workaround for transparent window crash/freeze
             // The transparent window feature is unstable on Linux with WebKitGTK
             // We disable the visual alpha channel to prevent softbuffer-related crashes
@@ -284,6 +293,7 @@ pub fn run() {
             commands::delete_accounts,
             commands::reorder_accounts,
             commands::switch_account,
+            commands::export_accounts,
             // Device fingerprint
             commands::get_device_profiles,
             commands::bind_device_profile,
@@ -380,12 +390,35 @@ pub fn run() {
             proxy::cli_sync::execute_cli_sync,
             proxy::cli_sync::execute_cli_restore,
             proxy::cli_sync::get_cli_config_content,
+            // Security/IP monitoring commands
+            commands::security::get_ip_access_logs,
+            commands::security::get_ip_stats,
+            commands::security::get_ip_token_stats,
+            commands::security::clear_ip_access_logs,
+            commands::security::get_ip_blacklist,
+            commands::security::add_ip_to_blacklist,
+            commands::security::remove_ip_from_blacklist,
+            commands::security::clear_ip_blacklist,
+            commands::security::check_ip_in_blacklist,
+            commands::security::get_ip_whitelist,
+            commands::security::add_ip_to_whitelist,
+            commands::security::remove_ip_from_whitelist,
+            commands::security::clear_ip_whitelist,
+            commands::security::check_ip_in_whitelist,
+            commands::security::get_security_config,
+            commands::security::update_security_config,
             // Cloudflared commands
             commands::cloudflared::cloudflared_check,
             commands::cloudflared::cloudflared_install,
             commands::cloudflared::cloudflared_start,
             commands::cloudflared::cloudflared_stop,
             commands::cloudflared::cloudflared_get_status,
+            // Debug console commands
+            modules::log_bridge::enable_debug_console,
+            modules::log_bridge::disable_debug_console,
+            modules::log_bridge::is_debug_console_enabled,
+            modules::log_bridge::get_debug_console_logs,
+            modules::log_bridge::clear_debug_console_logs,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

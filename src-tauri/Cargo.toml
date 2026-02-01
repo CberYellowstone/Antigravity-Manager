@@ -1,6 +1,6 @@
 [package]
 name = "antigravity_tools"
-version = "4.0.9"
+version = "4.0.12"
 description = "A Tauri App"
 authors = ["you"]
 license = "CC-BY-NC-SA-4.0"
@@ -45,7 +45,7 @@ tokio-stream = { version = "0.1.17", features = ["sync"] }
 
 hyper = { version = "1", features = ["full"] }
 hyper-util = { version = "0.1", features = ["full"] }
-tower = "0.4"
+tower = { version = "0.4", features = ["util"] }
 tower-http = { version = "0.5", features = ["cors", "trace", "fs"] }
 eventsource-stream = "0.2"
 dashmap = "6.1"
@@ -68,6 +68,7 @@ sha2 = "0.10"
 toml = "0.8"
 toml_edit = "0.22"
 tauri-plugin-window-state = "2"
+parking_lot = "0.12.5"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 gtk = "0.18"

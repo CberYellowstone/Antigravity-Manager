@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useConfigStore } from '../../stores/useConfigStore';
 import LogoIcon from '../../../src-tauri/icons/icon.png';
 
+
 import { isTauri, isLinux } from '../../utils/env';
 
 function Navbar() {
@@ -18,6 +19,7 @@ function Navbar() {
         { path: '/api-proxy', label: t('nav.proxy'), icon: Network, priority: 'high' },
         { path: '/monitor', label: t('nav.call_records'), icon: Activity, priority: 'medium' },
         { path: '/token-stats', label: t('nav.token_stats', 'Token 统计'), icon: BarChart3, priority: 'low' },
+        { path: '/security', label: t('nav.security'), icon: Lock, priority: 'low' },
         { path: '/settings', label: t('nav.settings'), icon: Settings, priority: 'high' },
     ];
 
@@ -269,6 +271,8 @@ function Navbar() {
 
                     {/* 右侧快捷设置按钮 */}
                     <div className="flex items-center gap-2">
+
+
                         {/* 主题切换按钮 */}
                         <button
                             onClick={toggleTheme}

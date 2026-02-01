@@ -394,7 +394,22 @@ pub fn transform_openai_request(
     // 为 thinking 模型注入 thinkingConfig (使用 thinkingBudget 而非 thinkingLevel)
     if actual_include_thinking {
         // [NEW] 优先使用用户指定的 budget，否则使用默认值
-        let budget: i64 = user_thinking_budget.map(|b| b as i64).unwrap_or(32000);
+        // [FIX #1355] Detect Gemini Flash models and cap thinking budget to 24576
+        // Flash thinking models strictly enforce range [1, 24576]
+        // [FIX] Claude thinking 模型 (如 claude-opus-4-5-thinking) 转发到 Gemini 时也受此限制
+        let mut budget: i64 = user_thinking_budget.map(|b| b as i64).unwrap_or(32000);
+        
+        let is_gemini_limited = mapped_model_lower.contains("flash") 
+            || mapped_model_lower.contains("gemini-1.5")
+            || is_claude_thinking;  // Claude thinking 模型转发到 Gemini，同样需要限流
+        if is_gemini_limited && budget > 24576 {
+             tracing::info!(
+                "[OpenAI-Request] Capping thinking budget from {} to 24576 for Flash model: {}", 
+                budget, mapped_model
+            );
+            budget = 24576;
+        }
+
         gen_config["thinkingConfig"] = json!({
             "includeThoughts": true,
             "thinkingBudget": budget
@@ -710,5 +725,53 @@ mod tests {
         // Verify thinkingBudget
         let budget = gen_config["thinkingConfig"]["thinkingBudget"].as_i64().unwrap();
         assert_eq!(budget, 32000);
+    }
+
+    #[test]
+    fn test_flash_thinking_budget_capping() {
+        let req = OpenAIRequest {
+            model: "gpt-4".to_string(),
+            messages: vec![OpenAIMessage {
+                role: "user".to_string(),
+                content: Some(OpenAIContent::String("Hello".to_string())),
+                reasoning_content: None,
+                tool_calls: None,
+                tool_call_id: None,
+                name: None,
+            }],
+            stream: false,
+            n: None,
+            // User specifies a large budget (e.g. xhigh = 32768)
+            thinking: Some(ThinkingConfig {
+                thinking_type: Some("enabled".to_string()),
+                budget_tokens: Some(32768),
+            }),
+            max_tokens: None,
+            temperature: None,
+            top_p: None,
+            stop: None,
+            response_format: None,
+            tools: None,
+            tool_choice: None,
+            parallel_tool_calls: None,
+            instructions: None,
+            input: None,
+            prompt: None,
+            size: None,
+            quality: None,
+            person_generation: None,
+        };
+
+        // Test with Flash model
+        let result = transform_openai_request(&req, "test-p", "gemini-2.0-flash-thinking-exp");
+        let gen_config = &result["request"]["generationConfig"];
+        
+        // Should be capped at 24576
+        let budget = gen_config["thinkingConfig"]["thinkingBudget"].as_i64().unwrap();
+        assert_eq!(budget, 24576);
+
+        // Max output tokens should be adjusted based on capped budget (24576 + 8192)
+        let max_output = gen_config["maxOutputTokens"].as_i64().unwrap();
+        assert_eq!(max_output, 32768);
     }
 }

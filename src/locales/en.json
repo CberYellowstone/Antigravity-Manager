@@ -46,6 +46,7 @@
         "proxy": "API Proxy",
         "call_records": "Traffic Logs",
         "token_stats": "Token Stats",
+        "security": "IP Management",
         "settings": "Settings",
         "theme_to_dark": "Switch to Dark Mode",
         "theme_to_light": "Switch to Light Mode",
@@ -289,6 +290,7 @@
             "account": "Account",
             "proxy": "Proxy Settings",
             "advanced": "Advanced",
+            "debug": "Debug",
             "about": "About"
         },
         "general": {
@@ -390,6 +392,13 @@
             "http_api_port_invalid": "Invalid port number (range: 1024-65535)",
             "http_api_settings_saved": "HTTP API settings saved, restart required to apply",
             "http_api_restart_required": "⚠️ Restart required to apply"
+        },
+        "debug": {
+            "title": "Debug Settings",
+            "console_title": "Debug Console",
+            "console_desc": "View real-time application logs to troubleshoot issues.",
+            "enable_desc": "Enable to capture and display backend logs.",
+            "open_btn": "Open Console"
         },
         "about": {
             "title": "About",
@@ -963,6 +972,100 @@
             "decode_error": "Network unstable, data transmission interrupted. Try: 1) Check network 2) Switch proxy 3) Retry",
             "stream_error": "Stream transmission error, please retry later",
             "unknown_error": "Unknown error occurred, please retry later"
+        }
+    },
+    "security": {
+        "title": "Security Monitor",
+        "refresh_data": "Refresh Data",
+        "refresh": "Refresh",
+        "tab_logs": "Access Logs",
+        "tab_stats": "Statistics",
+        "tab_blacklist": "Blacklist",
+        "tab_whitelist": "Whitelist",
+        "tab_config": "Security Config",
+        "stats": {
+            "total_requests": "Total Requests",
+            "total_requests_desc": "All recorded requests",
+            "unique_ips": "Unique IPs",
+            "unique_ips_desc": "Distinct client IP addresses",
+            "blocked_requests": "Blocked Requests",
+            "blocked_requests_desc": "Requests rejected by rules",
+            "ip_activity_token_usage": "IP Activity & Token Usage",
+            "hour": "Hr",
+            "day": "Day",
+            "week": "Wk",
+            "month": "Mo",
+            "rank": "Rank",
+            "ip_address": "IP Address",
+            "activity_reqs": "Activity (Reqs)",
+            "total_token": "Total Token",
+            "prompt": "Prompt",
+            "completion": "Completion",
+            "no_data": "No Data"
+        },
+        "logs": {
+            "search_placeholder": "Search IP, Path, User Agent...",
+            "show_blocked_only": "Show Blocked Only",
+            "status": "Status",
+            "ip_address": "IP Address",
+            "method": "Method",
+            "path": "Path",
+            "duration": "Duration",
+            "time": "Time",
+            "reason": "Reason",
+            "blocked": "Blocked",
+            "no_logs": "No logs available",
+            "total_records": "Total {{total}} records",
+            "prev_page": "Previous",
+            "next_page": "Next",
+            "page_num": "Page {{page}}",
+            "per_page_suffix": "/page"
+        },
+        "blacklist": {
+            "add_ip": "Add IP",
+            "search_placeholder": "Search...",
+            "added_at": "Added At",
+            "expires_at": "Expires At",
+            "no_data": "No blacklist data",
+            "add_title": "Add to Blacklist",
+            "ip_cidr_label": "IP Address or CIDR",
+            "ip_cidr_placeholder": "e.g. 192.168.1.1 or 10.0.0.0/24",
+            "reason_label": "Reason (Optional)",
+            "reason_placeholder": "e.g. Malicious scanning",
+            "expires_label": "Expire Time (Hours, Optional)",
+            "expires_placeholder": "Leave empty for permanent",
+            "cancel": "Cancel",
+            "confirm": "Add",
+            "add_btn": "Add"
+        },
+        "whitelist": {
+            "add_ip": "Add Trusted IP",
+            "no_data": "No whitelist data",
+            "add_title": "Add to Whitelist",
+            "description_label": "Description (Optional)",
+            "description_placeholder": "e.g. Internal Server",
+            "cancel": "Cancel",
+            "confirm": "Add",
+            "add_btn": "Add"
+        },
+        "config": {
+            "title": "Security Settings",
+            "save": "Save Changes",
+            "saving": "Saving...",
+            "blacklist_title": "IP Blacklist",
+            "blacklist_desc": "Manage blocked IP addresses and rules.",
+            "enable_blacklist": "Enable Blacklist Protection",
+            "block_msg_label": "Custom Block Message",
+            "block_msg_desc": "Response content returned to blocked clients.",
+            "whitelist_title": "IP Whitelist",
+            "whitelist_desc": "Manage trusted IP addresses.",
+            "enable_whitelist": "Enable Whitelist Mode",
+            "whitelist_warning": "Warning: Enabling whitelist mode will block ALL requests from IPs not in the whitelist. If you access via proxy, be careful not to lock yourself out.",
+            "whitelist_priority": "Whitelist Priority (Overrides Blacklist)",
+            "whitelist_priority_desc": "If enabled, whitelisted IPs will be allowed even if they match blacklist rules.",
+            "load_error": "Failed to load configuration",
+            "save_success": "Configuration saved",
+            "save_error": "Failed to save configuration"
         }
     }
 }

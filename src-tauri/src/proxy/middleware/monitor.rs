@@ -29,6 +29,22 @@ pub async fn monitor_middleware(
     
     let start = Instant::now();
     
+    // Extract client IP from headers (X-Forwarded-For or X-Real-IP)
+    // IMPORTANT: Extract from Request headers, not Response headers (since we want the client's IP)
+    // Note: We need to do this BEFORE consuming the request body if possible, or extract it from the original request
+    let client_ip = request
+        .headers()
+        .get("x-forwarded-for")
+        .and_then(|v| v.to_str().ok())
+        .map(|s| s.split(',').next().unwrap_or(s).trim().to_string())
+        .or_else(|| {
+            request
+                .headers()
+                .get("x-real-ip")
+                .and_then(|v| v.to_str().ok())
+                .map(|s| s.to_string())
+        });
+
     let mut model = if uri.contains("/v1beta/models/") {
         uri.split("/v1beta/models/")
             .nth(1)
@@ -100,6 +116,8 @@ pub async fn monitor_middleware(
         None
     };
 
+    // Client IP has been extracted at the beginning of the function
+
     let monitor = state.monitor.clone();
     let mut log = ProxyRequestLog {
         id: uuid::Uuid::new_v4().to_string(),
@@ -111,6 +129,7 @@ pub async fn monitor_middleware(
         model,
         mapped_model,
         account_email,
+        client_ip,
         error: None,
         request_body: request_body_str,
         response_body: None,
@@ -118,6 +137,7 @@ pub async fn monitor_middleware(
         output_tokens: None,
         protocol,
     };
+
 
     if content_type.contains("text/event-stream") {
         let (parts, body) = response.into_parts();

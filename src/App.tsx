@@ -7,8 +7,10 @@ import Settings from './pages/Settings';
 import ApiProxy from './pages/ApiProxy';
 import Monitor from './pages/Monitor';
 import TokenStats from './pages/TokenStats';
+import Security from './pages/Security';
 import ThemeManager from './components/common/ThemeManager';
 import { UpdateNotification } from './components/UpdateNotification';
+import DebugConsole from './components/debug/DebugConsole';
 import { useEffect, useState } from 'react';
 import { useConfigStore } from './stores/useConfigStore';
 import { useAccountStore } from './stores/useAccountStore';
@@ -42,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: 'token-stats',
         element: <TokenStats />,
+      },
+      {
+        path: 'security',
+        element: <Security />,
       },
       {
         path: 'settings',
@@ -135,6 +141,7 @@ function App() {
   return (
     <AdminAuthGuard>
       <ThemeManager />
+      <DebugConsole />
       {showUpdateNotification && (
         <UpdateNotification onClose={() => setShowUpdateNotification(false)} />
       )}

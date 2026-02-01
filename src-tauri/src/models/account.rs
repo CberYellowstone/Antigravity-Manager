@@ -130,3 +130,16 @@ pub struct DeviceProfileVersion {
     #[serde(default)]
     pub is_current: bool,
 }
+
+/// 导出账号项（用于备份/迁移）
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AccountExportItem {
+    pub email: String,
+    pub refresh_token: String,
+}
+
+/// 导出账号响应
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AccountExportResponse {
+    pub accounts: Vec<AccountExportItem>,
+}

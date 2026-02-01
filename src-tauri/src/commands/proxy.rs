@@ -115,12 +115,16 @@ pub async fn internal_start_proxy_service(
     
     let _monitor = state.monitor.read().await.as_ref().unwrap().clone();
     
-    // 2. 初始化 Token 管理器
-    let app_data_dir = crate::modules::account::get_data_dir()?;
-    let _ = crate::modules::account::get_accounts_dir()?;
-    let accounts_dir = app_data_dir.clone();
+    // 檢查並啟動管理服務器（如果尚未運行）
+    ensure_admin_server(config.clone(), state, integration.clone(), cloudflared_state.clone()).await?;
+
+    // 2. [FIX] 复用管理服务器的 Token 管理器 (单实例，解决热更新同步问题)
+    let token_manager = {
+        let admin_lock = state.admin_server.read().await;
+        admin_lock.as_ref().unwrap().axum_server.token_manager.clone()
+    };
     
-    let token_manager = Arc::new(TokenManager::new(accounts_dir));
+    // 同步配置到运行中的 TokenManager
     token_manager.start_auto_cleanup();
     token_manager.update_sticky_config(config.scheduling.clone()).await;
     
@@ -133,9 +137,6 @@ pub async fn internal_start_proxy_service(
         token_manager.set_preferred_account(Some(account_id.clone())).await;
         tracing::info!("🔒 [FIX #820] Fixed account mode restored: {}", account_id);
     }
-
-    // 檢查並啟動管理服務器（如果尚未運行）
-    ensure_admin_server(config.clone(), state, integration.clone(), cloudflared_state.clone()).await?;
 
     // 3. 加載賬號
     let active_accounts = token_manager.load_accounts().await

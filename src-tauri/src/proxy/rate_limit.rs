@@ -223,14 +223,16 @@ impl RateLimitTracker {
             },
             None => {
                 // 获取连续失败次数，用于指数退避（带自动过期逻辑）
-                let failure_count = {
+                // [FIX] ServerError (5xx) 不累加 failure_count，避免污染 429 的退避阶梯
+                let failure_count = if reason != RateLimitReason::ServerError {
+                    // 只有非 ServerError 才累加失败计数（用于指数退避）
                     let now = SystemTime::now();
                     // 这里我们使用 account_id 作为 key，不区分模型，
-                    // 因为这里是为了计算连续“账号级”问题的退避。
+                    // 因为这里是为了计算连续"账号级"问题的退避。
                     // 如果需要针对模型的连续失败计数，可能需要改变 failure_counts 的 key。
                     // 暂时保持 account_id，这样如果一个模型一直挂，也会增加计数，符合逻辑。
                     let mut entry = self.failure_counts.entry(account_id.to_string()).or_insert((0, now));
-                    
+
                     let elapsed = now.duration_since(entry.1).unwrap_or(Duration::from_secs(0)).as_secs();
                     if elapsed > FAILURE_COUNT_EXPIRY_SECONDS {
                         tracing::debug!("账号 {} 失败计数已过期（{}秒），重置为 0", account_id, elapsed);
@@ -239,6 +241,9 @@ impl RateLimitTracker {
                     entry.0 += 1;
                     entry.1 = now;
                     entry.0
+                } else {
+                    // ServerError (5xx) 使用固定值 1，不累加，避免污染 429 的退避阶梯
+                    1
                 };
                 
                 match reason {
@@ -623,5 +628,52 @@ mod tests {
         let reason = tracker.parse_rate_limit_reason(body);
         // 应该被识别为 RateLimitExceeded，而不是 QuotaExhausted
         assert_eq!(reason, RateLimitReason::RateLimitExceeded);
+    }
+
+    #[test]
+    fn test_server_error_does_not_accumulate_failure_count() {
+        let tracker = RateLimitTracker::new();
+        let backoff_steps = vec![60, 300, 1800, 7200];
+
+        // 模拟连续 5 次 5xx 错误
+        for i in 1..=5 {
+            let info = tracker.parse_from_error("acc1", 503, None, "Service Unavailable", None, &backoff_steps);
+            assert!(info.is_some(), "第 {} 次 5xx 应该返回 RateLimitInfo", i);
+            let info = info.unwrap();
+            // 5xx 应该始终锁定 8 秒，不受 failure_count 影响
+            assert_eq!(info.retry_after_sec, 8, "5xx 第 {} 次应该锁定 8 秒", i);
+        }
+
+        // 现在触发一次 429 QuotaExhausted（没有 quotaResetDelay）
+        let quota_body = r#"{"error":{"details":[{"reason":"QUOTA_EXHAUSTED"}]}}"#;
+        let info = tracker.parse_from_error("acc1", 429, None, quota_body, None, &backoff_steps);
+        assert!(info.is_some());
+        let info = info.unwrap();
+
+        // 关键断言：429 应该从第 1 次开始（锁 60 秒），而不是继承 5xx 的计数
+        assert_eq!(info.retry_after_sec, 60, "429 应该从第 1 次退避开始(60秒),而不是被 5xx 污染");
+    }
+
+    #[test]
+    fn test_quota_exhausted_does_accumulate_failure_count() {
+        let tracker = RateLimitTracker::new();
+        let backoff_steps = vec![60, 300, 1800, 7200];
+        let quota_body = r#"{"error":{"details":[{"reason":"QUOTA_EXHAUSTED"}]}}"#;
+
+        // 第 1 次 429 → 60 秒
+        let info = tracker.parse_from_error("acc2", 429, None, quota_body, None, &backoff_steps);
+        assert_eq!(info.unwrap().retry_after_sec, 60);
+
+        // 第 2 次 429 → 300 秒
+        let info = tracker.parse_from_error("acc2", 429, None, quota_body, None, &backoff_steps);
+        assert_eq!(info.unwrap().retry_after_sec, 300);
+
+        // 第 3 次 429 → 1800 秒
+        let info = tracker.parse_from_error("acc2", 429, None, quota_body, None, &backoff_steps);
+        assert_eq!(info.unwrap().retry_after_sec, 1800);
+
+        // 第 4 次 429 → 7200 秒
+        let info = tracker.parse_from_error("acc2", 429, None, quota_body, None, &backoff_steps);
+        assert_eq!(info.unwrap().retry_after_sec, 7200);
     }
 }

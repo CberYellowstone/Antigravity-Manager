@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { save } from '@tauri-apps/plugin-dialog';
+import { AlertTriangle, ArrowRight, Bot, Download, RefreshCw, Sparkles, Users } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Users, Sparkles, Bot, AlertTriangle, ArrowRight, Download, RefreshCw } from 'lucide-react';
-import { isTauri } from '../utils/env';
-import { useAccountStore } from '../stores/useAccountStore';
-import CurrentAccount from '../components/dashboard/CurrentAccount';
-import BestAccounts from '../components/dashboard/BestAccounts';
 import AddAccountDialog from '../components/accounts/AddAccountDialog';
-import { save } from '@tauri-apps/plugin-dialog';
-import { request as invoke } from '../utils/request';
 import { showToast } from '../components/common/ToastContainer';
+import BestAccounts from '../components/dashboard/BestAccounts';
+import CurrentAccount from '../components/dashboard/CurrentAccount';
+import { exportAccounts } from '../services/accountService';
+import { useAccountStore } from '../stores/useAccountStore';
 import { Account } from '../types/account';
+import { isTauri } from '../utils/env';
+import { request as invoke } from '../utils/request';
 
 function Dashboard() {
     const { t } = useTranslation();
@@ -118,10 +119,16 @@ function Dashboard() {
                 return;
             }
 
-            const exportData = accountsToExport.map(acc => ({
-                email: acc.email,
-                refresh_token: acc.token.refresh_token
-            }));
+            // Get export data from API (contains refresh_token)
+            const accountIds = accountsToExport.map(acc => acc.id);
+            const response = await exportAccounts(accountIds);
+            
+            if (!response.accounts || response.accounts.length === 0) {
+                showToast(t('dashboard.toast.export_no_accounts'), 'warning');
+                return;
+            }
+
+            const exportData = response.accounts;
             const content = JSON.stringify(exportData, null, 2);
             const fileName = `antigravity_accounts_${new Date().toISOString().split('T')[0]}.json`;
 
