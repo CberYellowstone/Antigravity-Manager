@@ -90,6 +90,12 @@ export const MODEL_CONFIG: Record<string, ModelConfig> = {
         protectedKey: 'claude-opus',
         Icon: Claude.Color,
     },
+    'claude-opus-4-6-thinking': {
+        label: 'Claude 4.6 Opus Think',
+        shortLabel: 'Claude 4.6 Op',
+        protectedKey: 'claude-opus',
+        Icon: Claude.Color,
+    },
 };
 
 /**

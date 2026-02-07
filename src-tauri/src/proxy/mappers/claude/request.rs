@@ -677,10 +677,11 @@ fn should_disable_thinking_due_to_history(messages: &[Message]) -> bool {
 fn should_enable_thinking_by_default(model: &str) -> bool {
     let model_lower = model.to_lowercase();
 
-    // Enable thinking by default for Opus 4.5 variants
-    if model_lower.contains("opus-4-5") || model_lower.contains("opus-4.5") {
+    // Enable thinking by default for Opus 4.5 and 4.6 variants
+    if model_lower.contains("opus-4-5") || model_lower.contains("opus-4.5")
+        || model_lower.contains("opus-4-6") || model_lower.contains("opus-4.6") {
         tracing::debug!(
-            "[Thinking-Mode] Auto-enabling thinking for Opus 4.5 model: {}",
+            "[Thinking-Mode] Auto-enabling thinking for Opus model: {}",
             model
         );
         return true;

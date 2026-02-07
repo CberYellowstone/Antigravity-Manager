@@ -80,6 +80,13 @@ export const useProxyModels = () => {
             desc: t('proxy.model.claude_opus_thinking'),
             group: 'Claude 4.5',
             icon: <Cpu size={16} />
+        },
+        {
+            id: 'claude-opus-4-6-thinking',
+            name: 'Claude 4.6 Opus (Thinking)',
+            desc: t('proxy.model.claude_opus_thinking'),
+            group: 'Claude 4.6',
+            icon: <Cpu size={16} />
         }
     ];
 
