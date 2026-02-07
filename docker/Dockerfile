@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # --- Backend Build Stage ---
-FROM rust:1-slim AS backend-builder
+FROM rust:1-slim-bookworm AS backend-builder
 ARG USE_MIRROR=auto
 
 # Conditionally use Aliyun mirror for APT
