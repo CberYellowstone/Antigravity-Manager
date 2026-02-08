@@ -1,5 +1,5 @@
 # Antigravity Tools 🚀
-> Professional AI Account Management & Protocol Proxy System (v4.1.9)
+> Professional AI Account Management & Protocol Proxy System (v4.1.10)
 
 <div align="center">
   <img src="public/icon.png" alt="Antigravity Logo" width="120" height="120" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
@@ -9,7 +9,7 @@
   
   <p>
     <a href="https://github.com/lbjlaq/Antigravity-Manager">
-      <img src="https://img.shields.io/badge/Version-4.1.9-blue?style=flat-square" alt="Version">
+      <img src="https://img.shields.io/badge/Version-4.1.10-blue?style=flat-square" alt="Version">
     </a>
     <img src="https://img.shields.io/badge/Tauri-v2-orange?style=flat-square" alt="Tauri">
     <img src="https://img.shields.io/badge/Backend-Rust-red?style=flat-square" alt="Rust">
@@ -255,6 +255,19 @@ print(response.choices[0].message.content)
 ## 📝 Developer & Community
 
 *   **Changelog**:
+    *   **v4.1.10 (2026-02-08)**:
+        -   **[Core Fix] Smart Resolution Protection for Image Generation (Issue #1694)**:
+            -   **Priority Logic**: Refactored the image configuration merging algorithm to prioritize high-resolution settings from model suffixes (e.g., `-4k`, `-2k`) or explicit parameters (`quality: "hd"`). This prevents accidental downgrades caused by default parameters in the request body.
+            -   **Capability Boost**: Supports concurrent high-resolution image generation and full Thinking process display.
+        -   **[Core Feature] Deep Optimization for Advanced Thinking & Global Config**:
+            -   **Image Thinking Mode**: Added a new global toggle. When enabled, it provides dual-image output (draft + final) and full thinking chains; when disabled, the system explicitly enforces `includeThoughts: false` to prioritize single-image generation quality.
+            -   **UI Refactoring**: Compressed the "Advanced Thinking" module layout using row-based alignment and compact controls, reducing vertical space usage by 50% for better information density.
+            -   **Global Prompt Enhancements**: Improved the input experience with real-time character counting and long-context warnings.
+        -   **[i18n] Synchronized Support for 10+ Languages**:
+            -   **Multilingual Completion**: Fully synchronized translation keys for the Advanced Thinking module across Traditional Chinese, Japanese, Korean, Arabic, Spanish, Russian, Vietnamese, Turkish, Portuguese, and Myanmar.
+        -   **[Core Fix] Full Protocol Support & Stability Enhancements**:
+            -   **Unified Coverage**: Image Thinking controls are now synchronized across Gemini Native, OpenAI-Compatible, and Claude (Anthropic) protocols.
+            -   **DevOps Cleanup**: Resolved global state race conditions in backend unit tests and updated GitHub Release CI configurations to support asset overwriting.
     *   **v4.1.9 (2026-02-08)**:
         -   **[Core Feature] Expand CLI Config Quick Sync Support (PR #1680, #1685)**:
             -   **Multi-Tool Integration**: Now supports syncing configurations to **Claude Code**, **Gemini CLI**, **Codex AI**, **OpenCode**, and **Droid**.

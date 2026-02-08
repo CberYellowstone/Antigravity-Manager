@@ -77,6 +77,34 @@ pub fn update_global_system_prompt_config(config: GlobalSystemPromptConfig) {
     }
 }
 
+// ============================================================================
+// 全局图像思维模式配置存储
+// ============================================================================
+static GLOBAL_IMAGE_THINKING_MODE: OnceLock<RwLock<String>> = OnceLock::new();
+
+pub fn get_image_thinking_mode() -> String {
+    GLOBAL_IMAGE_THINKING_MODE
+        .get()
+        .and_then(|lock| lock.read().ok())
+        .map(|s| s.clone())
+        .unwrap_or_else(|| "enabled".to_string())
+}
+
+pub fn update_image_thinking_mode(mode: Option<String>) {
+    let val = mode.unwrap_or_else(|| "enabled".to_string());
+    if let Some(lock) = GLOBAL_IMAGE_THINKING_MODE.get() {
+        if let Ok(mut cfg) = lock.write() {
+            if *cfg != val {
+                *cfg = val.clone();
+                tracing::info!("[Image-Thinking] Global config updated: {}", val);
+            }
+        }
+    } else {
+        let _ = GLOBAL_IMAGE_THINKING_MODE.set(RwLock::new(val.clone()));
+        tracing::info!("[Image-Thinking] Global config initialized: {}", val);
+    }
+}
+
 /// 全局系统提示词配置
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlobalSystemPromptConfig {
@@ -496,6 +524,12 @@ pub struct ProxyConfig {
     #[serde(default)]
     pub global_system_prompt: GlobalSystemPromptConfig,
 
+    /// 图像思维模式配置
+    /// - enabled: 保留思维链 (默认)
+    /// - disabled: 移除思维链 (画质优先)
+    #[serde(default)]
+    pub image_thinking_mode: Option<String>,
+
     /// 代理池配置
     #[serde(default)]
     pub proxy_pool: ProxyPoolConfig,
@@ -535,6 +569,7 @@ impl Default for ProxyConfig {
             thinking_budget: ThinkingBudgetConfig::default(),
             global_system_prompt: GlobalSystemPromptConfig::default(),
             proxy_pool: ProxyPoolConfig::default(),
+            image_thinking_mode: None,
         }
     }
 }

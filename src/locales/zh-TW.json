@@ -476,24 +476,40 @@
             "support_wechat": "Weixin Pay",
             "support_buymeacoffee": "Buy Me a Coffee"
         },
+        "advanced_thinking": {
+            "title": "高級思維与全局配置",
+            "description": "集中管理思維能力、圖像模式及全局指令。"
+        },
         "thinking_budget": {
             "title": "思考預算 (Thinking Budget)",
-            "description": "控制 AI 深度思考時的 Token 預算。某些模型（如 Flash、帶 -thinking 後置的模型）受上游 24576 上限限制。",
+            "description": "控制 AI 深度思考時的 Token 預算。某些模型（如 Flash、帶 -thinking 後綴的模型）受上游 24576 上限限制。",
             "mode_label": "處理模式",
             "mode": {
                 "auto": "自動限制",
-                "auto_desc": "智能限制",
                 "passthrough": "透傳",
-                "passthrough_desc": "不做限制",
-                "custom": "自定義",
-                "custom_desc": "固定值"
+                "custom": "自定義"
             },
-            "auto_hint": "自動模式：對 Flash 模型、-thinking 後置模型、以及啟用 Web Search 的請求自動限制在 24576 以避免 API 錯誤。其他模型保持原始請求值。",
-            "passthrough_warning": "透传模式：直接使用调用方传入的 thinking_budget 值，不做任何限制。如果上游 API 不支持高值可能导致请求失败。",
-            "custom_value_label": "自定義值",
-            "custom_value_hint": "範圍：1024 - 65536。推薦值：24576（Flash 上限）或 51200（標準擴展思考）。",
-            "high_value_warning": "當前值超過 24576，某些模型（Flash、-thinking）可能不支持並導致請求失敗。",
+            "auto_hint": "自動模式：對 Flash 模型、-thinking 後綴模型、以及啟用 Web Search 的請求自動限制在 24576 以避免 API 錯誤。",
+            "passthrough_warning": "透傳：直接使用調用方原始值，不支持高值可能導致失敗。",
+            "custom_value_hint": "推薦：24576 (Flash) 或 51200 (擴展)",
             "tokens": "tokens"
+        },
+        "image_thinking_mode": {
+            "title": "圖像思維模式 (Image Thinking Mode)",
+            "hint": "影響畫質與生成流程",
+            "options": {
+                "enabled": "開啟",
+                "disabled": "關閉",
+                "enabled_desc": "開啟：保留思維鏈，返回草圖 + 成品雙圖。",
+                "disabled_desc": "關閉：禁用思維鏈，直接生成單張超清圖片（畫質優先）。"
+            }
+        },
+        "global_system_prompt": {
+            "title": "全局系統提示詞 (Global System Prompt)",
+            "hint": "自動注入所有請求的 systemInstruction",
+            "placeholder": "輸入全局系統提示詞...\n例如：你是一位資深的全棧開發工程師，擅長 React 和 Rust。請使用繁體中文回复。",
+            "char_count": "{{count}} 字符",
+            "long_prompt_warning": "提示詞較長（超過 2000 字符），可能會佔用較多的上下文窗口空間。"
         }
     },
     "tray": {

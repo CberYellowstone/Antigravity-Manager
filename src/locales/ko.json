@@ -479,24 +479,40 @@
             "support_wechat": "위챗 페이",
             "support_buymeacoffee": "Buy Me a Coffee"
         },
+        "advanced_thinking": {
+            "title": "고급 사고 및 전역 설정",
+            "description": "사고 능력, 이미지 모드 및 전역 지침을 중앙에서 관리합니다."
+        },
         "thinking_budget": {
             "title": "사고 예산 (Thinking Budget)",
             "description": "AI 딥러닝 사고 시의 토큰 예산을 제어합니다. 일부 모델(Flash, -thinking 접미사 모델 등)은 상위 API에 의해 24576 제한을 받습니다.",
             "mode_label": "처리 모드",
             "mode": {
                 "auto": "자동 제한",
-                "auto_desc": "스마트 제한",
                 "passthrough": "패스스루",
-                "passthrough_desc": "제한 없음",
-                "custom": "사용자 정의",
-                "custom_desc": "고정 값"
+                "custom": "사용자 정의"
             },
-            "auto_hint": "자동 모드: Flash 모델, -thinking 접미사 모델 및 웹 검색이 활성화된 요청에 대해 API 오류를 방지하기 위해 자동으로 24576으로 제한합니다. 다른 모델은 원래 요청 값을 유지합니다.",
-            "passthrough_warning": "패스스루 모드: 호출자의 thinking_budget 값을 직접 사용하며 아무런 제한을 두지 않습니다. 상위 API가 높은 값을 지원하지 않을 경우 요청이 실패할 수 있습니다.",
-            "custom_value_label": "사용자 정의 값",
-            "custom_value_hint": "범위: 1024 - 65536. 권장 값: 24576(Flash 제한) 또는 51200(표준 확장 사고).",
-            "high_value_warning": "현재 값이 24576을 초과합니다. 일부 모델(Flash, -thinking)은 이를 지원하지 않아 요청이 실패할 수 있습니다.",
+            "auto_hint": "자동 모드: Flash 모델, -thinking 접미사 모델 및 웹 검색이 활성화된 요청에 대해 API 오류를 방지하기 위해 자동으로 24576으로 제한합니다.",
+            "passthrough_warning": "패스스루: 호출자의 원래 값을 직접 사용하며, 높은 값은 실패로 이어질 수 있습니다.",
+            "custom_value_hint": "권장: 24576 (Flash) 또는 51200 (성능)",
             "tokens": "tokens"
+        },
+        "image_thinking_mode": {
+            "title": "이미지 사고 모드 (Image Thinking Mode)",
+            "hint": "이미지 품질 및 생성 프로세스에 영향",
+            "options": {
+                "enabled": "활성화",
+                "disabled": "비활성화",
+                "enabled_desc": "켜짐: 사고 체인을 유지하고 스케치와 최종 완성본 두 장의 이미지를 반환합니다.",
+                "disabled_desc": "꺼짐: 사고 체인을 비활성화하고 고화질 단일 이미지를 생성합니다 (품질 우선)."
+            }
+        },
+        "global_system_prompt": {
+            "title": "전역 시스템 프롬프트 (Global System Prompt)",
+            "hint": "모든 요청의 systemInstruction에 자동으로 주입됩니다",
+            "placeholder": "전역 시스템 프롬프트를 입력하세요...\n예: 당신은 React와 Rust에 능숙한 시니어 풀스택 개발자입니다. 한국어로 답변해 주세요.",
+            "char_count": "{{count}} 자",
+            "long_prompt_warning": "프롬프트가 너무 깁니다 (2000자 초과). 컨텍스트 공간을 많이 차지할 수 있습니다."
         }
     },
     "tray": {

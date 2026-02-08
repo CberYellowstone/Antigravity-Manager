@@ -32,6 +32,7 @@ pub use config::get_global_system_prompt;
 pub use config::get_thinking_budget_config;
 pub use config::update_global_system_prompt_config;
 pub use config::update_thinking_budget_config;
+pub use config::{get_image_thinking_mode, update_image_thinking_mode};
 pub use config::ProxyAuthMode;
 pub use config::ProxyConfig;
 pub use config::ProxyPoolConfig;

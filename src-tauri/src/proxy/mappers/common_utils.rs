@@ -26,37 +26,51 @@ pub fn resolve_request_config(
 ) -> RequestConfig {
     // 1. Image Generation Check (Priority)
     if mapped_model.starts_with("gemini-3-pro-image") {
-        // [NEW] Priority 1: Parse imageConfig from Gemini request body (generationConfig.imageConfig)
+        // [RESOLVE #1694] Improved priority logic:
+        // 1. First parse inferred config from model suffix and OpenAI parameters
+        let (mut inferred_config, parsed_base_model) =
+            parse_image_config_with_params(original_model, size, quality);
+
+        // 2. Then merge with imageConfig from Gemini request body (if exists)
         if let Some(body_val) = body {
             if let Some(gen_config) = body_val.get("generationConfig") {
-                if let Some(image_config) = gen_config.get("imageConfig") {
+                if let Some(body_image_config) = gen_config.get("imageConfig") {
                     tracing::info!(
-                        "[Common-Utils] Parsed imageConfig from Gemini request body: {:?}",
-                        image_config
+                        "[Common-Utils] Found imageConfig in body, merging with inferred config from suffix/params"
                     );
                     
-                    // Extract base model without suffix (always gemini-3-pro-image for image gen)
-                    let parsed_base_model = "gemini-3-pro-image".to_string();
-                    
-                    return RequestConfig {
-                        request_type: "image_gen".to_string(),
-                        inject_google_search: false,
-                        final_model: parsed_base_model,
-                        image_config: Some(image_config.clone()),
-                    };
+                    if let Some(inferred_obj) = inferred_config.as_object_mut() {
+                        if let Some(body_obj) = body_image_config.as_object() {
+                            // Merge body_obj into inferred_obj
+                            for (key, value) in body_obj {
+                                // CRITICAL: Only allow body to override if inferred doesn't already have a high-priority value
+                                // Specifically, if we inferred imageSize from -4k, don't let body downgrade it if it's missing or standard.
+                                let is_size_downgrade = key == "imageSize" && 
+                                    (value.as_str() == Some("1K") || value.is_null()) &&
+                                    inferred_obj.contains_key("imageSize");
+
+                                if !is_size_downgrade {
+                                    inferred_obj.insert(key.clone(), value.clone());
+                                } else {
+                                    tracing::debug!("[Common-Utils] Shielding inferred imageSize from body downgrade");
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        // [FALLBACK] Priority 2: Parse from model name suffix or OpenAI parameters
-        let (image_config, parsed_base_model) =
-            parse_image_config_with_params(original_model, size, quality);
+        tracing::info!(
+            "[Common-Utils] Final Image Config for {}: {:?}",
+            parsed_base_model, inferred_config
+        );
 
         return RequestConfig {
             request_type: "image_gen".to_string(),
             inject_google_search: false,
             final_model: parsed_base_model,
-            image_config: Some(image_config),
+            image_config: Some(inferred_config),
         };
     }
 
@@ -616,5 +630,50 @@ mod tests {
         assert_eq!(calculate_aspect_ratio_from_size("1920x0"), "1:1");
         assert_eq!(calculate_aspect_ratio_from_size("0x1080"), "1:1");
         assert_eq!(calculate_aspect_ratio_from_size("abc x def"), "1:1");
+    }
+
+    #[test]
+    fn test_image_config_merging_priority() {
+        // Case 1: Body contains empty/default imageSize, suffix contains -4k
+        // Expected: Should KEEP 4K from suffix
+        let body = json!({
+            "generationConfig": {
+                "imageConfig": {
+                    "aspectRatio": "1:1",
+                    "imageSize": "1K" // Simulated downgrade from client
+                }
+            }
+        });
+        let config = resolve_request_config(
+            "gemini-3-pro-image-4k",
+            "gemini-3-pro-image",
+            &None,
+            None,
+            None,
+            Some(&body),
+        );
+        let image_config = config.image_config.unwrap();
+        assert_eq!(image_config["imageSize"], "4K", "Should shield inferred 4K from body downgrade");
+        assert_eq!(image_config["aspectRatio"], "1:1", "Should take aspectRatio from body");
+
+        // Case 2: Suffix contains -16-9, Body contains aspectRatio: 1:1
+        // Expected: Body overrides suffix for aspectRatio (since it's not a 'downgrade' shield case yet, only size is shielded)
+        let body_2 = json!({
+            "generationConfig": {
+                "imageConfig": {
+                    "aspectRatio": "1:1"
+                }
+            }
+        });
+        let config_2 = resolve_request_config(
+            "gemini-3-pro-image-16x9",
+            "gemini-3-pro-image",
+            &None,
+            None,
+            None,
+            Some(&body_2),
+        );
+        let image_config_2 = config_2.image_config.unwrap();
+        assert_eq!(image_config_2["aspectRatio"], "1:1", "Body should be allowed to override aspectRatio");
     }
 }

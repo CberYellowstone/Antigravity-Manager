@@ -18,29 +18,30 @@ export default function GlobalSystemPrompt({
     const { t } = useTranslation();
 
     return (
-        <div className="space-y-4">
-            {/* 标题区域 */}
-            <div className="bg-purple-50/50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-800/30 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1 flex-1">
-                        <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">
-                            {t("settings.global_system_prompt.title", { defaultValue: "全局系统提示词 (Global System Prompt)" })}
-                        </h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                            {t("settings.global_system_prompt.description", {
-                                defaultValue: "设置一段全局提示词，将自动注入到所有 API 请求的 systemInstruction 中，位于 Antigravity 身份之后、客户端提示词之前。",
-                            })}
-                        </p>
-                    </div>
-                    {/* 启用/禁用开关 */}
-                    <label className="relative inline-flex items-center cursor-pointer ml-4 shrink-0">
+        <div className="space-y-3">
+            {/* 标题区域 (Compact) */}
+            <div className="flex items-center justify-between gap-3 bg-purple-50/30 dark:bg-purple-900/5 border border-purple-100/50 dark:border-purple-800/20 rounded-lg px-4 py-3">
+                <div className="space-y-0.5">
+                    <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100">
+                        {t("settings.global_system_prompt.title", { defaultValue: "全局系统提示词 (Global System Prompt)" })}
+                    </h4>
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                        {t("settings.global_system_prompt.hint", { defaultValue: "自动注入所有请求的 systemInstruction" })}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <span className={`text-[10px] font-medium ${config.enabled ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`}>
+                        {config.enabled ? t("common.enabled", { defaultValue: "已启用" }) : t("common.disabled", { defaultValue: "已禁用" })}
+                    </span>
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0">
                         <input
                             type="checkbox"
                             checked={config.enabled}
                             onChange={(e) => onChange({ ...config, enabled: e.target.checked })}
                             className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-gray-600 peer-checked:bg-purple-600"></div>
+                        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:after:border-gray-600 peer-checked:bg-purple-600"></div>
                     </label>
                 </div>
             </div>

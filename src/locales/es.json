@@ -476,24 +476,40 @@
             "support_wechat": "WeChat Pay",
             "support_buymeacoffee": "Buy Me a Coffee"
         },
+        "advanced_thinking": {
+            "title": "Pensamiento Avanzado y Configuración Global",
+            "description": "Administre las capacidades de pensamiento, los modos de imagen y las instrucciones globales de forma centralizada."
+        },
         "thinking_budget": {
             "title": "Presupuesto de Pensamiento (Thinking Budget)",
             "description": "Controla el presupuesto de tokens para el pensamiento profundo de la IA. Algunos modelos (p. ej., Flash, modelos con sufijo -thinking) están limitados a 24576 por la API ascendente.",
             "mode_label": "Modo de Procesamiento",
             "mode": {
                 "auto": "Límite Automático",
-                "auto_desc": "Límite inteligente",
                 "passthrough": "Paso Directo",
-                "passthrough_desc": "Sin límite",
-                "custom": "Personalizado",
-                "custom_desc": "Valor fijo"
+                "custom": "Personalizado"
             },
-            "auto_hint": "Modo Automático: Limita automáticamente el presupuesto a 24576 para modelos Flash, modelos con sufijo -thinking y solicitudes de búsqueda web para evitar errores de API. Otros modelos conservan sus valores originales.",
-            "passthrough_warning": "Modo de Paso Directo: Utiliza directamente el valor de thinking_budget del llamador sin límites. Puede causar fallos en la solicitud si la API ascendente no admite valores altos.",
-            "custom_value_label": "Valor Personalizado",
-            "custom_value_hint": "Rango: 1024 - 65536. Recomendado: 24576 (límite Flash) o 51200 (pensamiento extendido estándar).",
-            "high_value_warning": "El valor actual excede 24576. Es posible que algunos modelos (Flash, -thinking) no lo admitan y las solicitudes fallen.",
+            "auto_hint": "Modo Automático: Limita automáticamente el presupuesto a 24576 para modelos Flash, modelos con sufijo -thinking y solicitudes de búsqueda web para evitar errores de API.",
+            "passthrough_warning": "Paso Directo: Utiliza directamente el valor original de la solicitud; el no soporte de valores altos puede causar fallos.",
+            "custom_value_hint": "Recomendado: 24576 (límite Flash) o 51200 (Extendido)",
             "tokens": "tokens"
+        },
+        "image_thinking_mode": {
+            "title": "Modo de Pensamiento de Imagen (Image Thinking Mode)",
+            "hint": "Afecta la calidad de la imagen y el proceso de generación",
+            "options": {
+                "enabled": "Activado",
+                "disabled": "Desactivado",
+                "enabled_desc": "Encendido: Mantiene la cadena de pensamiento y devuelve dos imágenes (boceto + final).",
+                "disabled_desc": "Apagado: Desactiva la cadena de pensamiento y genera una imagen única de alta calidad (prioridad calidad)."
+            }
+        },
+        "global_system_prompt": {
+            "title": "Instrucciones del Sistema Globales (Global System Prompt)",
+            "hint": "Se inyecta automáticamente en systemInstruction para todas las solicitudes",
+            "placeholder": "Ingrese las instrucciones globales del sistema...\nEjemplo: Eres un desarrollador full-stack senior experto en React y Rust. Responde en español.",
+            "char_count": "{{count}} caracteres",
+            "long_prompt_warning": "Las instrucciones son muy largas (más de 2000 caracteres) y pueden consumir mucho espacio del contexto."
         }
     },
     "tray": {

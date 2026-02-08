@@ -604,14 +604,28 @@ pub fn transform_claude_request_in(
             // 3. Clean generationConfig (remove responseMimeType, responseModalities etc.)
             let gen_config = obj.entry("generationConfig").or_insert_with(|| json!({}));
             if let Some(gen_obj) = gen_config.as_object_mut() {
-                // [REMOVED] thinkingConfig 拦截已删除，允许图像生成时输出思维链
-                // gen_obj.remove("thinkingConfig");
+                // [RESOLVE #1694] Check image thinking mode
+                let image_thinking_mode = crate::proxy::config::get_image_thinking_mode();
+                if image_thinking_mode == "disabled" {
+                    tracing::debug!(
+                        "[Claude-Request] Image thinking mode disabled: enforcing includeThoughts=false for {}",
+                        mapped_model
+                    );
+                    gen_obj.insert(
+                        "thinkingConfig".to_string(),
+                        json!({
+                            "includeThoughts": false
+                        }),
+                    );
+                }
+
                 gen_obj.remove("responseMimeType");
                 gen_obj.remove("responseModalities");
                 gen_obj.insert("imageConfig".to_string(), image_config);
             }
         }
     }
+
 
     // 生成 requestId
     let request_id = format!("agent-{}", uuid::Uuid::new_v4());
@@ -2699,5 +2713,44 @@ mod tests {
             gen_config.get("thinkingConfig").is_some(),
             "thinkingConfig should be auto-enabled for gemini-3-pro"
         );
+    }
+
+    #[test]
+    fn test_claude_image_thinking_mode_disabled() {
+        // 1. Force image thinking mode to "disabled"
+        crate::proxy::config::update_image_thinking_mode(Some("disabled".to_string()));
+
+        // 2. Setup Claude request for an image model (mapped to gemini-3-pro-image)
+        let req = ClaudeRequest {
+            model: "gemini-3-pro-image".to_string(), // Explicitly use recognized image model
+            messages: vec![Message {
+                role: "user".to_string(),
+                content: MessageContent::String("Draw a cat".to_string()),
+            }],
+            thinking: None,
+            max_tokens: None,
+            temperature: None,
+            top_p: None,
+            top_k: None,
+            stream: false,
+            system: None,
+            tools: None,
+            metadata: None,
+            output_config: None,
+            size: Some("1024x1024".to_string()),
+            quality: Some("hd".to_string()),
+        };
+
+        // 3. Transform request
+        let result = transform_claude_request_in(&req, "test-proj", false).unwrap();
+
+        // 4. Verify thinkingConfig has includeThoughts: false
+        let gen_config = result["request"]["generationConfig"].as_object().expect("Should have generationConfig");
+        let thinking_config = gen_config.get("thinkingConfig").and_then(|t| t.as_object()).expect("Should have thinkingConfig (explicitly disabled)");
+        
+        assert_eq!(thinking_config["includeThoughts"], false);
+        
+        // 5. Reset global mode
+        crate::proxy::config::update_image_thinking_mode(Some("enabled".to_string()));
     }
 }

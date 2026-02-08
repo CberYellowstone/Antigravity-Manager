@@ -485,24 +485,40 @@
       "support_wechat": "WeChat Pay",
       "support_buymeacoffee": "コーヒーを奢る"
     },
+    "advanced_thinking": {
+      "title": "推論とグローバル設定",
+      "description": "推論能力、画像モード、グローバル命令を集中管理します。"
+    },
     "thinking_budget": {
       "title": "思考予算 (Thinking Budget)",
       "description": "AI の思考 Token 予算を制御します。一部のモデル（Flash、-thinking サフィックスなど）は、アップストリームにより 24576 の上限があります。",
-      "mode_label": "処理モード",
+      "mode_label": "処理模式",
       "mode": {
         "auto": "自動制限",
-        "auto_desc": "スマート制限",
         "passthrough": "パススルー",
-        "passthrough_desc": "制限なし",
-        "custom": "カスタム",
-        "custom_desc": "固定値"
+        "custom": "カスタム"
       },
-      "auto_hint": "自動モード: Flash モデル、-thinking サフィックスモデル、および Web Search が有効なリクエストに対して、API エラーを避けるため自動的に 24576 に制限します。その他のモデルは元のリクエスト値を保持します。",
-      "passthrough_warning": "パススルーモード: 呼び出し元の thinking_budget 値を直接使用し、制限を一切行いません。アップストリーム API が高い値をサポートしていない場合、リクエストが失敗する可能性があります。",
-      "custom_value_label": "カスタム値",
-      "custom_value_hint": "範囲: 1024 - 65536。推奨値: 24576 (Flash 上限) または 51200 (標準の拡張思考)。",
-      "high_value_warning": "現在の値が 24576 を超えています。一部のモデル（Flash、-thinking）ではサポートされず、リクエストが失敗する可能性があります。",
+      "auto_hint": "自動モード: Gemini/Thinking および Web 検索リクエストを、エラーを避けるため自動的に 24576 に制限します。",
+      "passthrough_warning": "パススルー: 呼び出し元の値を直接使用します。高い値は失敗の原因となる可能性があります。",
+      "custom_value_hint": "推奨: 24576 (Flash) または 51200 (拡張思考)",
       "tokens": "tokens"
+    },
+    "image_thinking_mode": {
+      "title": "画像思考モード (Image Thinking Mode)",
+      "hint": "画質と生成プロセスに影響します",
+      "options": {
+        "enabled": "有効",
+        "disabled": "無効",
+        "enabled_desc": "オン: 思考プロセスを保持し、スケッチと最終画像を返します。",
+        "disabled_desc": "オフ: 思考プロセスを無効にし、1枚の超鮮明な画像を生成します (画質優先)。"
+      }
+    },
+    "global_system_prompt": {
+      "title": "グローバルシステムプロンプト (Global System Prompt)",
+      "hint": "すべてのリクエストの systemInstruction に自動的に注入されます",
+      "placeholder": "グローバルシステムプロンプトを入力してください...\n例: あなたは React と Rust に精通したシニアフルスタックエンジニアです。日本語で回答してください。",
+      "char_count": "{{count}} 文字",
+      "long_prompt_warning": "プロンプトがかなり長く（2000文字以上）、コンテキスト スペースを大幅に消費する可能性があります。"
     },
     "quota_protection": {
       "auto_restore_info": "クォータがリセットされると、アカウントは自動的に再度有効になります",

@@ -472,18 +472,40 @@
             "support_wechat": "WeChat Pay",
             "support_buymeacoffee": "Buy Me a Coffee"
         },
+        "advanced_thinking": {
+            "title": "Pensamento Avançado e Configuração Global",
+            "description": "Gerencie capacidades de pensamento, modos de imagem e instruções globais centralmente."
+        },
         "thinking_budget": {
             "title": "Orçamento de Pensamento (Thinking Budget)",
-            "description": "Controla a profundidade de raciocínio do modelo de IA, afetando sua capacidade de resolver tarefas complexas",
-            "mode_auto": "Automático (Recomendado)",
-            "mode_auto_desc": "O sistema aplica o limite ideal para cada modelo",
-            "mode_passthrough": "Passagem direta",
-            "mode_passthrough_desc": "Confia totalmente no valor do chamador (gestão de riscos por sua conta)",
-            "mode_custom": "Personalizado",
-            "mode_custom_desc": "Usar um valor de orçamento personalizado fixo",
-            "custom_value_label": "Valor de orçamento personalizado",
-            "custom_value_hint": "Intervalo: 1024 - 65536 tokens",
-            "warning_passthrough": "⚠️ O modo de passagem direta pode consumir a cota rapidamente"
+            "description": "Controla o orçamento de tokens para o pensamento profundo da IA. Alguns modelos (ex: Flash, modelos com sufixo -thinking) são limitados a 24576 pela API upstream.",
+            "mode_label": "Modo de Processamento",
+            "mode": {
+                "auto": "Limite Automático",
+                "passthrough": "Passagem Direta",
+                "custom": "Personalizado"
+            },
+            "auto_hint": "Modo Automático: Limita automaticamente o orçamento em 24576 para modelos Flash, modelos com sufixo -thinking e solicitações de pesquisa na web para evitar erros de API.",
+            "passthrough_warning": "Passagem Direta: Usa diretamente o valor original do chamador. A falta de suporte para valores altos pode causar falhas.",
+            "custom_value_hint": "Recomendado: 24576 (Flash) ou 51200 (Estendido)",
+            "tokens": "tokens"
+        },
+        "image_thinking_mode": {
+            "title": "Modo de Pensamento de Iimagem (Image Thinking Mode)",
+            "hint": "Afeta a qualidade da imagem e o processo de geração",
+            "options": {
+                "enabled": "Ativado",
+                "disabled": "Desativado",
+                "enabled_desc": "Ligado: Mantém a cadeia de pensamento e retorna duas imagens (esboço + final).",
+                "disabled_desc": "Desligado: Desativa a cadeia de pensamento e gera uma imagem única de alta qualidade (prioridade qualidade)."
+            }
+        },
+        "global_system_prompt": {
+            "title": "Instruções do Sistema Globais (Global System Prompt)",
+            "hint": "Injetado automaticamente em systemInstruction para todas as solicitações",
+            "placeholder": "Insira as instruções globais do sistema...\nExemplo: Você é um desenvolvedor full-stack sênior especialista em React e Rust. Responda em português.",
+            "char_count": "{{count}} caracteres",
+            "long_prompt_warning": "As instruções são muito longas (mais de 2000 caracteres) e podem consumir muito espaço do contexto."
         }
     },
     "tray": {

@@ -35,6 +35,7 @@ import { CliSyncCard } from '../components/proxy/CliSyncCard';
 import DebouncedSlider from '../components/common/DebouncedSlider';
 import { listAccounts } from '../services/accountService';
 import CircuitBreaker from '../components/settings/CircuitBreaker';
+import AdvancedThinking from '../components/settings/AdvancedThinking';
 import { CircuitBreakerConfig } from '../types/config';
 
 interface ProxyStatus {
@@ -1868,6 +1869,17 @@ print(response.text)`;
                                         </div>
                                     )}
                                 </div>
+                            </CollapsibleCard>
+
+                            {/* Advanced Thinking & Global Config */}
+                            <CollapsibleCard
+                                title={t('settings.advanced_thinking.title', { defaultValue: 'Advanced Thinking & Global Config' })}
+                                icon={<BrainCircuit size={18} className="text-pink-500" />}
+                            >
+                                <AdvancedThinking
+                                    config={appConfig.proxy}
+                                    onChange={(newProxyConfig) => updateProxyConfig(newProxyConfig)}
+                                />
                             </CollapsibleCard>
 
                             {/* 实验性设置 */}

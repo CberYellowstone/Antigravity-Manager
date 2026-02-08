@@ -475,18 +475,40 @@
             "support_wechat": "WeChat Pay",
             "support_buymeacoffee": "Buy Me a Coffee"
         },
+        "advanced_thinking": {
+            "title": "Tư duy Nâng cao & Cấu hình Toàn cầu",
+            "description": "Quản lý tập trung các khả năng tư duy, chế độ hình ảnh và hướng dẫn toàn cầu."
+        },
         "thinking_budget": {
             "title": "Ngân sách Suy nghĩ (Thinking Budget)",
-            "description": "Kiểm soát độ sâu suy luận của mô hình AI, ảnh hưởng đến khả năng giải quyết tác vụ phức tạp",
-            "mode_auto": "Tự động (Khuyến nghị)",
-            "mode_auto_desc": "Hệ thống áp dụng giới hạn tối ưu cho từng mô hình",
-            "mode_passthrough": "Chuyển tiếp",
-            "mode_passthrough_desc": "Hoàn toàn tin tưởng giá trị của người gọi (quản lý rủi ro tự chịu trách nhiệm)",
-            "mode_custom": "Tùy chỉnh",
-            "mode_custom_desc": "Sử dụng giá trị ngân sách tùy chỉnh cố định",
-            "custom_value_label": "Giá trị ngân sách tùy chỉnh",
-            "custom_value_hint": "Phạm vi: 1024 - 65536 token",
-            "warning_passthrough": "⚠️ Chế độ chuyển tiếp có thể tiêu hao hạn mức nhanh chóng"
+            "description": "Kiểm soát ngân sách token cho suy nghĩ sâu của AI. Một số mô hình (ví dụ: Flash, mô hình có hậu tố -thinking) bị giới hạn ở mức 24576 bởi API upstream.",
+            "mode_label": "Chế độ Xử lý",
+            "mode": {
+                "auto": "Giới hạn Tự động",
+                "passthrough": "Chuyển tiếp",
+                "custom": "Tùy chỉnh"
+            },
+            "auto_hint": "Chế độ Tự động: Tự động giới hạn ngân sách ở mức 24576 cho các mô hình Flash, mô hình có hậu tố -thinking và yêu cầu tìm kiếm web để tránh lỗi API.",
+            "passthrough_warning": "Chế độ Chuyển tiếp: Sử dụng trực tiếp giá trị gốc của người gọi. Việc thiếu hỗ trợ cho các giá trị cao có thể gây ra lỗi.",
+            "custom_value_hint": "Khuyến nghị: 24576 (Flash) hoặc 51200 (Mở rộng)",
+            "tokens": "tokens"
+        },
+        "image_thinking_mode": {
+            "title": "Chế độ Tư duy Hình ảnh (Image Thinking Mode)",
+            "hint": "Ảnh hưởng đến chất lượng hình ảnh và quy trình tạo",
+            "options": {
+                "enabled": "Đã bật",
+                "disabled": "Đã tắt",
+                "enabled_desc": "Bật: Giữ lại chuỗi tư duy và trả về hai hình ảnh (bản phác thảo + bản cuối).",
+                "disabled_desc": "Tắt: Vô hiệu hóa chuỗi tư duy và tạo một hình ảnh chất lượng cao duy nhất (ưu tiên chất lượng)."
+            }
+        },
+        "global_system_prompt": {
+            "title": "Hướng dẫn Hệ thống Toàn cầu (Global System Prompt)",
+            "hint": "Tự động được chèn vào systemInstruction cho tất cả các yêu cầu",
+            "placeholder": "Nhập hướng dẫn hệ thống toàn cầu...\nVí dụ: Bạn là một nhà phát triển full-stack kỳ cựu chuyên về React và Rust. Trả lời bằng tiếng Việt.",
+            "char_count": "{{count}} ký tự",
+            "long_prompt_warning": "Hướng dẫn quá dài (hơn 2000 ký tự) và có thể tiêu tốn nhiều không gian ngữ cảnh."
         }
     },
     "tray": {

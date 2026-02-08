@@ -315,8 +315,19 @@ pub fn wrap_request(
             // 3. Clean generationConfig (remove responseMimeType, responseModalities etc.)
             let gen_config = obj.entry("generationConfig").or_insert_with(|| json!({}));
             if let Some(gen_obj) = gen_config.as_object_mut() {
-                // [REMOVED] thinkingConfig 拦截已删除，允许图像生成时输出思维链
-                // gen_obj.remove("thinkingConfig");
+                // [NEW] 根据全局配置决定是否保留 thinkingConfig
+                let image_thinking_mode = crate::proxy::config::get_image_thinking_mode();
+                tracing::debug!("[Gemini-Wrap] Image thinking mode: {}", image_thinking_mode);
+                
+                if image_thinking_mode == "disabled" {
+                    // [FIX] Explicitly disable thinking instead of just removing the config
+                    // Removing it might cause the model to fallback to default (which might be ON)
+                    gen_obj.insert("thinkingConfig".to_string(), json!({
+                        "includeThoughts": false
+                    }));
+                    tracing::debug!("[Gemini-Wrap] Image thinking mode disabled: set includeThoughts=false");
+                }
+                
                 gen_obj.remove("responseMimeType");
                 gen_obj.remove("responseModalities"); // Cherry Studio sends this, might conflict
                 gen_obj.insert("imageConfig".to_string(), image_config);
@@ -526,6 +537,9 @@ mod tests {
 
     #[test]
     fn test_gemini_flash_thinking_budget_capping() {
+        // Ensure default config (Auto mode)
+        crate::proxy::config::update_thinking_budget_config(crate::proxy::config::ThinkingBudgetConfig::default());
+
         let body = json!({
             "model": "gemini-2.0-flash-thinking-exp",
             "generationConfig": {
@@ -564,6 +578,33 @@ mod tests {
             .unwrap();
         // [FIX #1592] Pro models now also capped to 24576 in wrap_request logic
         assert_eq!(budget_pro, 24576);
+    }
+
+
+
+    #[test]
+    fn test_image_thinking_mode_disabled() {
+        // 1. Set global mode to disabled
+        crate::proxy::config::update_image_thinking_mode(Some("disabled".to_string()));
+
+        // 2. Create a request for an image model (which triggers the image logic)
+        // Note: resolve_request_config needs to return image_config for the logic to trigger
+        // So we use a model name that resolves to image_gen
+        let body = json!({
+            "model": "gemini-3-pro-image-2k",
+            "contents": [{"role": "user", "parts": [{"text": "Draw a cat"}]}]
+        });
+
+        let result = wrap_request(&body, "test-proj", "gemini-3-pro-image-2k", None);
+        let req = result.get("request").unwrap();
+        let gen_config = req.get("generationConfig").unwrap();
+        
+        // 3. Verify thinkingConfig has includeThoughts: false
+        let thinking_config = gen_config.get("thinkingConfig").unwrap();
+        assert_eq!(thinking_config["includeThoughts"], false);
+
+        // 4. Reset global mode
+        crate::proxy::config::update_image_thinking_mode(Some("enabled".to_string()));
     }
 
     #[test]

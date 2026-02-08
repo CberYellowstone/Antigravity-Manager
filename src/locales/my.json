@@ -476,18 +476,40 @@
             "support_wechat": "WeChat Pay",
             "support_buymeacoffee": "Buy Me a Coffee"
         },
+        "advanced_thinking": {
+            "title": "အဆင့်မြင့်တွေးခေါ်မှုနှင့် ကမ္ဘာလုံးဆိုင်ရာဖွဲ့စည်းမှု",
+            "description": "တွေးခေါ်နိုင်စွမ်း၊ ရုပ်ပုံမုဒ်များနှင့် ကမ္ဘာလုံးဆိုင်ရာညွှန်ကြားချက်များကို ဗဟိုမှစီမံခန့်ခွဲပါ။"
+        },
         "thinking_budget": {
             "title": "Bajet Pemikiran (Thinking Budget)",
-            "description": "Mengawal kedalaman penaakulan model AI, mempengaruhi keupayaannya menyelesaikan tugas kompleks",
-            "mode_auto": "Automatik (Disyorkan)",
-            "mode_auto_desc": "Sistem menggunakan had optimum untuk setiap model",
-            "mode_passthrough": "Laluan terus",
-            "mode_passthrough_desc": "Mempercayai nilai pemanggil sepenuhnya (pengurusan risiko tanggungjawab anda)",
-            "mode_custom": "Tersuai",
-            "mode_custom_desc": "Gunakan nilai bajet tersuai tetap",
-            "custom_value_label": "Nilai bajet tersuai",
-            "custom_value_hint": "Julat: 1024 - 65536 token",
-            "warning_passthrough": "⚠️ Mod laluan terus mungkin menghabiskan kuota dengan cepat"
+            "description": "AI ၏ နက်နဲသောတွေးခေါ်မှုအတွက် တိုကင်ဘတ်ဂျက်ကို ထိန်းချုပ်ပါ။ Flash မော်ဒယ်များ (ဥပမာ -thinking နောက်ဆက်တွဲပါသော မော်ဒယ်များ) သည် upstream API မှ ၂၄၅၇၆ အထိသာ ကန့်သတ်ထားပါသည်။",
+            "mode_label": "လုပ်ဆောင်မှုမုဒ်",
+            "mode": {
+                "auto": "အလိုအလျောက်ကန့်သတ်ချက်",
+                "passthrough": "တိုက်ရိုက်ပေးပို့ခြင်း",
+                "custom": "စိတ်ကြိုက်"
+            },
+            "auto_hint": "အလိုအလျောက်မုဒ်- API အမှားများကို ရှောင်ရှားရန် Flash မော်ဒယ်များ၊ -thinking နောက်ဆက်တွဲပါသော မော်ဒယ်များနှင့် ဝဘ်ရှာဖွေမှုတောင်းဆိုမှုများအတွက် ၂၄၅၇၆ သို့ အလိုအလျောက်ကန့်သတ်ပေးပါသည်။",
+            "passthrough_warning": "တိုက်ရိုက်ပေးပို့ခြင်း- ခေါ်ဆိုသူ၏ မူလတန်ဖိုးကို တိုက်ရိုက်အသုံးပြုသည်။ တန်ဖိုးမြင့်မားမှုများကို အားမပေးပါက ကျရှုံးနိုင်သည်။",
+            "custom_value_hint": "အကြံပြုချက်- ၂၄၅၇၆ (Flash) သို့မဟုတ် ၅၁၂၀၀ (တိုးချဲ့)",
+            "tokens": "tokens"
+        },
+        "image_thinking_mode": {
+            "title": "ရုပ်ပုံတွေးခေါ်မှုမုဒ် (Image Thinking Mode)",
+            "hint": "ရုပ်ပုံအရည်အသွေးနှင့် ဖန်တီးမှုလုပ်ငန်းစဉ်အပေါ် သက်ရောက်မှုရှိသည်",
+            "options": {
+                "enabled": "ဖွင့်ထားသည်",
+                "disabled": "ပိတ်ထားသည်",
+                "enabled_desc": "ဖွင့်ရန်: တွေးခေါ်မှုအစဉ်ကို ထိန်းသိမ်းပြီး ပုံကြမ်းနှင့် နောက်ဆုံးပုံနှစ်ပုံကို ပြန်ပေးသည်။",
+                "disabled_desc": "ပိတ်ရန်: တွေးခေါ်မှုအစဉ်ကို ပိတ်ထားပြီး အရည်အသွေးမြင့် ရုပ်ပုံတစ်ပုံတည်းကို တိုက်ရိုက်ဖန်တီးပေးသည် (အရည်အသွေးဦးစားပေး)။"
+            }
+        },
+        "global_system_prompt": {
+            "title": "ကမ္ဘာလုံးဆိုင်ရာ စနစ်ပရွမ်း (Global System Prompt)",
+            "hint": "တောင်းဆိုမှုအားလုံး၏ systemInstruction ထဲသို့ အလိုအလျောက် ထည့်သွင်းပေးမည်",
+            "placeholder": "ကမ္ဘာလုံးဆိုင်ရာ စနစ်ပရွမ်းကို ရိုက်ထည့်ပါ...\nဥပမာ- သင်သည် React နှင့် Rust ကျွမ်းကျင်သော စီနီယာ developer တစ်ဦးဖြစ်သည်။ မြန်မာဘာသာဖြင့် ဖြေဆိုပေးပါ။",
+            "char_count": "{{count}} လုံး",
+            "long_prompt_warning": "ပရွမ်းသည် ရှည်လွန်းနေသည် (စာလုံးရေ ၂၀၀၀ ထက်များနေသည်)၊ ၎င်းသည် စကားပြောဆိုမှုနယ်ပယ်ကို ပိုမိုနေရာယူနိုင်သည်။"
         }
     },
     "tray": {

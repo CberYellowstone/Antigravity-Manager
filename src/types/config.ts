@@ -23,6 +23,7 @@ export interface ProxyConfig {
     saved_user_agent?: string;
     thinking_budget?: ThinkingBudgetConfig;
     global_system_prompt?: GlobalSystemPromptConfig;
+    image_thinking_mode?: 'enabled' | 'disabled'; // [NEW] 图像思维模式开关
     proxy_pool?: ProxyPoolConfig;
 }
 
