@@ -368,6 +368,15 @@ pub async fn warm_up_all_accounts() -> Result<String, String> {
 
             for handle in handles {
                 if let Ok(Some((id, email, token, pid, Some((fresh_quota, _))))) = handle.await {
+                    // [FIX] 预热阶段检测到 403 时，持久化 is_forbidden 标记，避免无效账号继续参与轮询
+                    if fresh_quota.is_forbidden {
+                        crate::modules::logger::log_warn(&format!(
+                            "[Warmup] Account {} returned 403 Forbidden during quota fetch, persisting forbidden status",
+                            email
+                        ));
+                        let _ = crate::modules::account::update_account_quota(&id, fresh_quota);
+                        continue;
+                    }
                     let mut account_warmed_series = std::collections::HashSet::new();
                     for m in fresh_quota.models {
                         if m.percentage >= 100 {
@@ -487,6 +496,16 @@ pub async fn warm_up_account(account_id: &str) -> Result<String, String> {
     let (token, pid) = get_valid_token_for_warmup(&account_owned).await?;
     let (fresh_quota, _) = fetch_quota_with_cache(&token, &email, Some(&pid), Some(&account_owned.id)).await.map_err(|e| format!("Failed to fetch quota: {}", e))?;
     
+    // [FIX] 预热阶段检测到 403 时，持久化 is_forbidden 标记，避免无效账号继续参与轮询
+    if fresh_quota.is_forbidden {
+        crate::modules::logger::log_warn(&format!(
+            "[Warmup] Account {} returned 403 Forbidden during quota fetch, persisting forbidden status",
+            email
+        ));
+        let _ = crate::modules::account::update_account_quota(account_id, fresh_quota);
+        return Err("Account is forbidden (403)".to_string());
+    }
+
     let mut models_to_warm = Vec::new();
     let mut warmed_series = std::collections::HashSet::new();
 

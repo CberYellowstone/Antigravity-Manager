@@ -274,6 +274,18 @@ pub async fn handle_warmup(
                     .into_response()
             } else {
                 let error_text = response.text().await.unwrap_or_default();
+
+                // [FIX] 预热阶段检测到 403 时，标记账号为 forbidden，避免无效账号继续参与轮询
+                if status_code == 403 && !account_id.is_empty() {
+                    warn!(
+                        "[Warmup-API] 403 Forbidden detected for {}, marking account as forbidden",
+                        req.email
+                    );
+                    if let Err(e) = state.token_manager.set_forbidden(&account_id, &error_text).await {
+                        warn!("[Warmup-API] Failed to set forbidden status: {}", e);
+                    }
+                }
+
                 (
                     StatusCode::from_u16(status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR),
                     Json(WarmupResponse {
